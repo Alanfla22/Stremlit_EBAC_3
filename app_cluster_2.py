@@ -1,13 +1,9 @@
 import timeit
 import streamlit as st
 import pandas as pd
-from PIL import Image
 
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.preprocessing import MinMaxScaler
-
-custom_params = {'axes.spines.right': False, 'axes.spines.top': False}
-sns.set_theme(style='ticks', rc=custom_params)
 
 # Função para ler os dados
 @st.cache_resource(show_spinner= True)
@@ -73,9 +69,10 @@ def convert_df(df):
 
 def main():
     st.set_page_config(page_title = 'Clusterização dos Clientes', \
+        page_icon = '/content/telmarketing_icon.png',
         layout ='wide',
         initial_sidebar_state='expanded')
-    st.title('Clusterização dos Clientes')
+    st.title('Agrupamento dos Dados')
     st.markdown('---')
 
     st.sidebar.image('https://marketingpordados.com/wp-content/uploads/2021/08/Clusterizacao-2.jpg')
@@ -98,47 +95,46 @@ def main():
       bank_raw = load_data(data_file_1)
         
       st.write('Time: ', timeit.default_timer() - start)  
-      bank = bank_raw.copy()
       st.header('I - Tratamento dos Dados')
-      st.subheader('1 - Dados Brutos')
-      st.dataframe(bank_raw)
+      st.subheader('1 - Dados Importados')
+      st.dataframe(bank_raw, width=700)
 
     try:      
 
       dataset = transformar_dados(bank_raw)  
       st.subheader('2 - RFV dos Clientes')      
-      st.dataframe(dataset)
+      st.dataframe(dataset, width=700)
       bank_csv = convert_df(dataset)
-      st.download_button(label='📥 Download',
+      st.download_button(label='**Download**',
                         data=bank_csv,
                         file_name= 'dataset.csv')
 
       st.markdown("---")
-      st.header('II - Clusterização dos Dados')
+      st.header('II - Agrupamento')
       st.subheader('1 - Relação dos Clientes Agrupados')
       dataset_2 = dataset.copy()  
       dataset_cluster = clusterizar(dataset_2, n)
-      st.dataframe(dataset_cluster)
+      st.dataframe(dataset_cluster, width=700)
       bank_csv_2 = convert_df(dataset_cluster)
-      st.download_button(label='📥 Download',
+      st.download_button(label='**Download**',
                         data=bank_csv_2,
                         file_name= 'dataset_cluster.csv')
 
       st.markdown("---")
-      st.subheader('2 - Quantidade dos Grupos')
+      st.header('3 - Análise dos Grupos')
+      st.subheader('1 - Tamanho dos Grupos')
       cols_2 = dataset_cluster.columns[1:]
       dataset_group = pd.DataFrame(dataset_cluster['Grupo'].value_counts())
-      st.dataframe(dataset_group)
+      st.dataframe(dataset_group, width=700)
 
-      st.subheader('Quantidade')
       st.bar_chart(dataset_group)
 
 
       
-      st.subheader('3 - RFV Médio por Grupo')
+      st.subheader('2 - RFV Médio por Grupo')
       cols_2 = dataset_cluster.columns[1:]
       dataset_group_2 = pd.DataFrame(dataset_cluster[cols_2].groupby('Grupo').mean())
-      st.dataframe(dataset_group_2)
+      st.dataframe(dataset_group_2, width=700)
 
       colors = ['#1f77b4', '#ff7f0e', '#2ca02c']
 
@@ -159,14 +155,10 @@ def main():
         st.markdown('#### Valor Médio')
         st.bar_chart(dataset_group_2['Valor'], color=colors[2])
 
-
-
+      
     except:
 
       st.write('## Carregue os dados')
-
-    #  PLOTS  
-      
 
 
 if __name__ == '__main__':
