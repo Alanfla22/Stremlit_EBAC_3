@@ -1,7 +1,6 @@
 import timeit
 import streamlit as st
 import pandas as pd
-import seaborn as sns
 import matplotlib.pyplot as plt
 from PIL import Image
 
@@ -75,7 +74,6 @@ def convert_df(df):
 
 def main():
     st.set_page_config(page_title = 'Clusterização dos Clientes', \
-        page_icon = '/content/telmarketing_icon.png',
         layout ='wide',
         initial_sidebar_state='expanded')
     st.title('Clusterização dos Clientes')
